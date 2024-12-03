@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import useDrawStore from '../../store/drawStore';
+import Logo from './Logo';
 
 const DrawingFrame = () => {
   const { isDrawing, currentName, winner, participants, startDraw, resetDraw } = useDrawStore();
@@ -12,7 +13,10 @@ const DrawingFrame = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <div className="w-full max-w-2xl mx-auto text-center">
+      <div className="w-full max-w-2xl mx-auto text-center flex flex-col items-center">
+        <div className="mb-12">
+          <Logo />
+        </div>
         <div className="mb-8">
           <h1 className="text-5xl font-bold mb-4 text-text">Lucky Draw</h1>
           <p className="text-gray-600 text-lg">
@@ -20,7 +24,7 @@ const DrawingFrame = () => {
           </p>
         </div>
 
-        <div className="relative h-48 mb-8 flex items-center justify-center overflow-hidden border-4 border-accent rounded-xl bg-white/80 backdrop-blur-sm shadow-lg">
+        <div className="relative h-48 mb-8 flex items-center justify-center overflow-hidden border-4 border-accent rounded-xl bg-white/80 backdrop-blur-sm shadow-lg w-full">
           <AnimatePresence mode="wait">
             {winner ? (
               <motion.div
@@ -42,10 +46,13 @@ const DrawingFrame = () => {
             ) : isDrawing ? (
               <motion.div
                 key={currentName || 'drawing'}
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -50, opacity: 0 }}
-                transition={{ duration: 0.15 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ 
+                  duration: 0.25,
+                  ease: "easeInOut"
+                }}
                 className="text-4xl font-bold text-text"
               >
                 {currentName}

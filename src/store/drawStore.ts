@@ -71,11 +71,26 @@ const useDrawStore = create<DrawStore>()(
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
-            // Calculate interval between name updates
-            // Start at 50ms and gradually increase to 400ms
-            const interval = 50 + (progress * 350);
+            // Use easeInOutQuad for smooth acceleration and deceleration
+            const easeInOutQuad = (t: number) => {
+              return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            };
 
-            // Update name if enough time has passed since last update
+            // Calculate interval between name updates
+            // Start at 400ms, peak at 600ms in the middle, end at 900ms
+            const baseInterval = 400;
+            const midInterval = 600;
+            const endInterval = 900;
+            
+            let interval;
+            if (progress < 0.5) {
+              // First half: accelerate from base to mid
+              interval = baseInterval + (midInterval - baseInterval) * easeInOutQuad(progress * 2);
+            } else {
+              // Second half: decelerate from mid to end
+              interval = midInterval + (endInterval - midInterval) * easeInOutQuad((progress - 0.5) * 2);
+            }
+
             if (currentTime - lastUpdateTime >= interval) {
               const { currentName } = get();
               let newName;
@@ -95,7 +110,7 @@ const useDrawStore = create<DrawStore>()(
               const winnerIndex = Math.floor(Math.random() * participants.length);
               const winner = participants[winnerIndex];
               
-              // Set the winner but keep drawing state true
+              // Set the winner
               set({ currentName: winner, winner });
 
               // Wait 3 seconds before showing the winner modal
