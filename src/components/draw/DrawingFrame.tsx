@@ -26,20 +26,22 @@ const DrawingFrame = () => {
 
         <div className="relative h-48 mb-8 flex items-center justify-center overflow-hidden border-4 border-accent rounded-xl bg-white/80 backdrop-blur-sm shadow-lg w-full">
           <AnimatePresence mode="wait">
-            {winner ? (
+            {winner && !isDrawing ? (
               <motion.div
                 key="winner"
-                initial={{ scale: 0.5, opacity: 0 }}
+                initial={{ scale: 1, opacity: 1, color: '#000000' }}
                 animate={{ 
-                  scale: [0.5, 1.2, 1],
-                  opacity: 1 
+                  scale: [1, 1.2, 1],
+                  opacity: 1,
+                  color: '#E91E63' // accent color for winner
                 }}
                 transition={{
                   duration: 0.5,
                   times: [0, 0.7, 1],
-                  ease: "easeOut"
+                  ease: "easeOut",
+                  color: { delay: 0.5 } // delay color change
                 }}
-                className="text-5xl font-bold text-accent"
+                className="text-5xl font-bold"
               >
                 {winner}
               </motion.div>
@@ -50,7 +52,7 @@ const DrawingFrame = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ 
-                  duration: 0.25,
+                  duration: 0.15,
                   ease: "easeInOut"
                 }}
                 className="text-4xl font-bold text-text"
@@ -82,7 +84,7 @@ const DrawingFrame = () => {
           >
             {isDrawing ? 'Drawing...' : 'Draw'}
           </button>
-          {winner && (
+          {winner && !isDrawing && (
             <button
               onClick={resetDraw}
               className="px-8 py-3 text-lg font-semibold rounded-lg bg-gray-500 text-white

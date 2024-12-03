@@ -110,18 +110,26 @@ const useDrawStore = create<DrawStore>()(
               const winnerIndex = Math.floor(Math.random() * participants.length);
               const winner = participants[winnerIndex];
               
-              // Set the winner
-              set({ currentName: winner, winner });
-
-              // Wait 3 seconds before showing the winner modal
               setTimeout(() => {
-                set(state => ({ 
-                  isDrawing: false,
-                  showWinnerModal: true,
-                  participants: state.participants.filter(p => p !== winner)
-                }));
-                resolve();
-              }, 3000);
+                
+                // Set the winner but keep drawing state true
+                set({ currentName: winner, winner, isDrawing: true });
+
+                // Wait 1 second with winner in black
+                setTimeout(() => {
+                  // Then set drawing to false to trigger pink winner animation
+                  set({ isDrawing: false });
+
+                  // Wait 3 seconds before showing the winner modal
+                  setTimeout(() => {
+                    set(state => ({ 
+                      showWinnerModal: true,
+                      participants: state.participants.filter(p => p !== winner)
+                    }));
+                    resolve();
+                  }, 1500);
+                }, 1500);
+              }, 1200);
             }
           };
 
