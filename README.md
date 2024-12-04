@@ -7,9 +7,9 @@ A modern, animated lucky draw application built with React, TypeScript, and Vite
 - **Smooth Drawing Animation**: Names cycle through with dynamic speed transitions
 - **Participant Management**: Add and remove participants easily
 - **Winner Celebration**: Special animation when revealing the winner
-- **Persistent Storage**: Participant list is saved between sessions
+- **Flexible Storage**: Choose between local storage or jsonbin.io for data persistence
 - **Responsive Design**: Works on all screen sizes
-- **Git Info Display**: Shows current commit hash in top left corner
+- **Git Info Display**: Shows current commit hash and QR code to repository
 
 ## Technical Stack
 
@@ -19,12 +19,13 @@ A modern, animated lucky draw application built with React, TypeScript, and Vite
 - Tailwind CSS
 - Framer Motion
 - Zustand (State Management)
+- QRCode.react
 
 ## Getting Started
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/mattdlong/groove-lucky-draw.git
 cd lucky-draw
 ```
 
@@ -33,12 +34,54 @@ cd lucky-draw
 npm install
 ```
 
-3. Start the development server:
+3. Configure environment variables:
+Create a `.env` file with the following:
+
+```env
+# Git commit hash - automatically set during build/dev
+VITE_GIT_COMMIT_HASH=development
+
+# Storage Configuration
+# For local storage:
+VITE_JSONBIN_API_KEY=local
+
+# For jsonbin.io storage:
+# Note: Escape $ signs with \ in the API key
+# Example: VITE_JSONBIN_API_KEY=\$2a\$10\$syjjYBWFQ96TCq.T6QeCYOMr7jso38OFeV8jmORwAEqsZPlpZDPlS
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser
+5. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+## Environment Variables
+
+The application uses the following environment variables:
+
+- `VITE_GIT_COMMIT_HASH`: Current git commit hash (automatically set during build/dev)
+- `VITE_JSONBIN_API_KEY`: Storage configuration key
+  - Set to "local" for browser's localStorage
+  - Set to your jsonbin.io API key for remote storage (remember to escape $ signs)
+
+These are automatically set when running:
+- `npm run dev`
+- `npm run build`
+
+## Storage Configuration
+
+### Local Storage
+- Set `VITE_JSONBIN_API_KEY=local` in your .env file
+- Data persists in the browser's localStorage
+- Data is isolated to the current browser
+
+### JSONBin.io Storage
+- Set `VITE_JSONBIN_API_KEY` to your jsonbin.io API key
+- Remember to escape $ signs in the API key with backslashes
+- Data persists remotely and can be accessed across different browsers/devices
+- Automatically creates and manages storage bins
 
 ## Usage
 
@@ -59,8 +102,13 @@ npm run dev
 ### Participant Management
 - Add multiple participants at once
 - Automatic duplicate removal
-- Persistent storage between sessions
+- Flexible storage options (local or remote)
 - Real-time participant count display
+
+### Git Info Panel
+- Shows current commit hash
+- Includes QR code linking to repository
+- Updates automatically during development/build
 
 ### UI/UX
 - Clean, modern interface
@@ -70,9 +118,6 @@ npm run dev
 
 ## Development
 
-### Environment Variables
-- `VITE_GIT_COMMIT_HASH`: Git commit hash (automatically set)
-
 ### Project Structure
 ```
 src/
@@ -81,9 +126,11 @@ src/
 │   │   ├── DrawingFrame.tsx
 │   │   ├── ParticipantList.tsx
 │   │   └── WinnerModal.tsx
-│   └── GitInfo.tsx
+│   ├── GitInfo.tsx
+│   └── QRCode.tsx
 ├── store/
-│   └── drawStore.ts
+│   ├── drawStore.ts
+│   └── storage.ts
 ├── App.tsx
 └── main.tsx
 ```
@@ -94,6 +141,26 @@ Uses Zustand for state management with the following features:
 - Drawing state control
 - Winner selection
 - Modal control
+- Persistent storage with local/remote options
+
+### Dependencies
+
+#### Production Dependencies
+- `react`: ^18.2.0 - Core React library
+- `react-dom`: ^18.2.0 - React DOM rendering
+- `framer-motion`: ^11.0.3 - Animation library
+- `qrcode.react`: ^3.1.0 - QR code generation
+- `zustand`: ^4.5.0 - State management
+
+#### Development Dependencies
+- `typescript`: ^5.2.2 - TypeScript support
+- `vite`: ^5.0.8 - Build tool and dev server
+- `@vitejs/plugin-react`: ^4.2.1 - React support for Vite
+- `tailwindcss`: ^3.4.1 - Utility-first CSS framework
+- `postcss`: ^8.4.33 - CSS processing
+- `autoprefixer`: ^10.4.17 - CSS vendor prefixing
+- `eslint`: ^8.55.0 - Code linting
+- Various TypeScript and ESLint plugins for development
 
 ## Contributing
 

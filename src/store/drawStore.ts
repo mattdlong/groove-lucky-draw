@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, PersistOptions } from 'zustand/middleware';
+import { customStorage } from './storage';
 
 interface DrawState {
   participants: string[];
@@ -20,6 +21,22 @@ interface DrawActions {
 }
 
 type DrawStore = DrawState & DrawActions;
+
+type PersistedState = Pick<DrawState, 'participants'>;
+
+const persistOptions: PersistOptions<DrawStore, PersistedState> = {
+  name: 'lucky-draw-storage',
+  storage: customStorage,
+  partialize: (state) => ({
+    participants: state.participants,
+  }),
+  version: 0,
+  onRehydrateStorage: () => (state) => {
+    if (state) {
+      console.log('Hydrated state:', state);
+    }
+  },
+};
 
 const useDrawStore = create<DrawStore>()(
   persist(
@@ -149,12 +166,7 @@ const useDrawStore = create<DrawStore>()(
         set({ showWinnerModal: false });
       },
     }),
-    {
-      name: 'lucky-draw-storage',
-      partialize: (state) => ({
-        participants: state.participants
-      }),
-    }
+    persistOptions
   )
 );
 
