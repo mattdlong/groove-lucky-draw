@@ -35,12 +35,9 @@ npm install
 ```
 
 3. Configure environment variables:
-Create a `.env` file with the following:
+Create a `.env.local` file with the following:
 
 ```env
-# Git commit hash - automatically set during build/dev
-VITE_GIT_COMMIT_HASH=development
-
 # Storage Configuration
 # For local storage:
 VITE_JSONBIN_API_KEY=local
@@ -48,6 +45,8 @@ VITE_JSONBIN_API_KEY=local
 # For jsonbin.io storage:
 # Note: Escape $ signs with \ in the API key
 # Example: VITE_JSONBIN_API_KEY=\$2a\$10\$syjjYBWFQ96TCq.T6QeCYOMr7jso38OFeV8jmORwAEqsZPlpZDPlS
+
+# Git commit hash will be automatically added/updated when running npm run dev or npm run build
 ```
 
 4. Start the development server:
@@ -61,19 +60,18 @@ npm run dev
 
 The application uses the following environment variables:
 
-- `VITE_GIT_COMMIT_HASH`: Current git commit hash (automatically set during build/dev)
+- `VITE_GIT_COMMIT_HASH`: Current git commit hash (automatically managed)
+  - Automatically updated when running npm run dev or npm run build
+  - You don't need to set this manually
 - `VITE_JSONBIN_API_KEY`: Storage configuration key
   - Set to "local" for browser's localStorage
   - Set to your jsonbin.io API key for remote storage (remember to escape $ signs)
-
-These are automatically set when running:
-- `npm run dev`
-- `npm run build`
+  - This value persists between dev/build runs
 
 ## Storage Configuration
 
 ### Local Storage
-- Set `VITE_JSONBIN_API_KEY=local` in your .env file
+- Set `VITE_JSONBIN_API_KEY=local` in your .env.local file
 - Data persists in the browser's localStorage
 - Data is isolated to the current browser
 
