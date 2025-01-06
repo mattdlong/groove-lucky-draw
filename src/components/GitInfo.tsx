@@ -12,6 +12,7 @@ const GitHubIcon = () => (
 
 const GitInfo = () => {
   const [commitHash, setCommitHash] = useState('');
+  const repoUrl = 'https://github.com/mattdlong/groove-lucky-draw';
 
   useEffect(() => {
     const hash = import.meta.env.VITE_GIT_COMMIT_HASH || 'development';
@@ -20,15 +21,22 @@ const GitInfo = () => {
 
   return (
     <div className="fixed top-4 left-4 z-50">
-      <div className="bg-gray-800/95 text-white rounded-lg text-xs font-mono shadow-lg">
-        <div className="flex items-center px-3 py-2 border-b border-gray-700/50">
-          <GitHubIcon />
-          <span className="opacity-90">{commitHash ? `${commitHash}` : 'Loading...'}</span>
+      <a
+        href={repoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block hover:opacity-90 transition-opacity duration-200"
+      >
+        <div className="bg-gray-800/95 text-white rounded-lg text-xs font-mono shadow-lg">
+          <div className="flex items-center px-3 py-2 border-b border-gray-700/50">
+            <GitHubIcon />
+            <span className="opacity-90">{commitHash ? `${commitHash}` : 'Loading...'}</span>
+          </div>
+          <div className="p-3 flex items-center justify-center">
+            <QRCode />
+          </div>
         </div>
-        <div className="p-3 flex items-center justify-center">
-          <QRCode />
-        </div>
-      </div>
+      </a>
     </div>
   );
 };

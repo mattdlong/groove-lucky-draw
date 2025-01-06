@@ -79,7 +79,9 @@ The application uses the following environment variables:
 - Set `VITE_JSONBIN_API_KEY` to your jsonbin.io API key
 - Remember to escape $ signs in the API key with backslashes
 - Data persists remotely and can be accessed across different browsers/devices
-- Automatically creates and manages storage bins
+- Uses a shared storage bin for all instances
+- All users with the same API key will share the same participant list
+- Perfect for team events where multiple devices need access to the same draw
 
 ## Usage
 

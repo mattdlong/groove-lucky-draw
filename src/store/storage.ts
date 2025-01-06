@@ -7,63 +7,46 @@ interface PersistedState {
 const JSONBIN_URL = 'https://api.jsonbin.io/v3/b';
 
 class CustomStorage implements PersistStorage<PersistedState> {
-  private binId: string | null = null;
+  // Use an existing bin ID that's already been created
+  private readonly binId: string = '677b7588acd3cb34a8c4cb58';
   private apiKey: string = import.meta.env.VITE_JSONBIN_API_KEY;
 
-  private async createBin(value: StorageValue<PersistedState>): Promise<string> {
-    const response = await fetch(JSONBIN_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': this.apiKey,
-      },
-      body: JSON.stringify(value),
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('Error creating bin:', error);
-      throw new Error(error.message);
-    }
-    
-    const data = await response.json();
-    return data.metadata.id;
-  }
-
   private async updateBin(value: StorageValue<PersistedState>): Promise<void> {
-    if (!this.binId) {
-      this.binId = await this.createBin(value);
-      localStorage.setItem('jsonbin-id', this.binId);
-      return;
-    }
+    try {
+      const response = await fetch(`${JSONBIN_URL}/${this.binId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': this.apiKey,
+        },
+        body: JSON.stringify(value),
+      });
 
-    const response = await fetch(`${JSONBIN_URL}/${this.binId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': this.apiKey,
-      },
-      body: JSON.stringify(value),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Error updating bin:', error);
+        throw new Error(error.message);
+      }
+    } catch (error) {
       console.error('Error updating bin:', error);
-      throw new Error(error.message);
+      throw error;
     }
   }
 
   private async getBinData(): Promise<StorageValue<PersistedState> | null> {
-    if (!this.binId) return null;
-
     try {
       const response = await fetch(`${JSONBIN_URL}/${this.binId}/latest`, {
+        method: 'GET',
         headers: {
           'X-Master-Key': this.apiKey,
         },
       });
 
       if (!response.ok) {
+        if (response.status === 404) {
+          // Bin doesn't exist yet, return null
+          return null;
+        }
         const error = await response.json();
         console.error('Error fetching bin:', error);
         return null;
@@ -98,8 +81,6 @@ class CustomStorage implements PersistStorage<PersistedState> {
       }
     }
 
-    // Try to get existing binId
-    this.binId = localStorage.getItem('jsonbin-id');
     return this.getBinData();
   }
 
